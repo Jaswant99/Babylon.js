@@ -3,7 +3,7 @@ import { Observable } from "../../Misc/observable";
 import { Tools } from "../../Misc/tools";
 import { Nullable } from "../../types";
 import { Scene } from "../../scene";
-import { Matrix, Vector3, Plane } from "../../Maths/math";
+import { Matrix, Vector3, Plane, Vector2 } from "../../Maths/math";
 import { BaseTexture } from "../../Materials/Textures/baseTexture";
 import { Constants } from "../../Engines/constants";
 import { _AlphaState } from "../../States/index";
@@ -121,6 +121,13 @@ export class Texture extends BaseTexture {
     public vOffset = 0;
 
     /**
+     * Define an offset on the texture to offset the v coordinates of the UVs
+     * @see http://doc.babylonjs.com/how_to/more_materials#offsetting
+     */
+    @serialize()
+    public uvOffset = Vector2.Zero();
+
+    /**
      * Define an offset on the texture to scale the u coordinates of the UVs
      * @see http://doc.babylonjs.com/how_to/more_materials#tiling
      */
@@ -133,6 +140,13 @@ export class Texture extends BaseTexture {
      */
     @serialize()
     public vScale = 1.0;
+
+    /**
+     * Define an offset on the texture to scale the v coordinates of the UVs
+     * @see http://doc.babylonjs.com/how_to/more_materials#tiling
+     */
+    @serialize()
+    public uvScale = Vector2.One();
 
     /**
      * Define an offset on the texture to rotate around the u coordinates of the UVs
@@ -198,8 +212,10 @@ export class Texture extends BaseTexture {
 
     private _cachedUOffset: number = -1;
     private _cachedVOffset: number = -1;
+    private _cachedUVOffset: Vector2 = Vector2.Zero();
     private _cachedUScale: number = 0;
     private _cachedVScale: number = 0;
+    private _cachedUVScale: Vector2 = Vector2.One();
     private _cachedUAng: number = -1;
     private _cachedVAng: number = -1;
     private _cachedWAng: number = -1;
@@ -393,17 +409,17 @@ export class Texture extends BaseTexture {
     }
 
     private _prepareRowForTextureGeneration(x: number, y: number, z: number, t: Vector3): void {
-        x *= this.uScale;
-        y *= this.vScale;
+        x *= this.uvScale.x;
+        y *= this.uvScale.y;
 
-        x -= this.uRotationCenter * this.uScale;
-        y -= this.vRotationCenter * this.vScale;
+        x -= this.uRotationCenter * this.uvScale.x;
+        y -= this.vRotationCenter * this.uvScale.y;
         z -= this.wRotationCenter;
 
         Vector3.TransformCoordinatesFromFloatsToRef(x, y, z, this._rowGenerationMatrix!, t);
 
-        t.x += this.uRotationCenter * this.uScale + this.uOffset;
-        t.y += this.vRotationCenter * this.vScale + this.vOffset;
+        t.x += this.uRotationCenter * this.uvScale.x + this.uvOffset.x;
+        t.y += this.vRotationCenter * this.uvScale.y + this.uvOffset.y;
         t.z += this.wRotationCenter;
     }
 
@@ -415,8 +431,10 @@ export class Texture extends BaseTexture {
         if (
             this.uOffset === this._cachedUOffset &&
             this.vOffset === this._cachedVOffset &&
+            this.uvOffset === this._cachedUVOffset &&
             this.uScale === this._cachedUScale &&
             this.vScale === this._cachedVScale &&
+            this.uvScale === this._cachedUVScale &&
             this.uAng === this._cachedUAng &&
             this.vAng === this._cachedVAng &&
             this.wAng === this._cachedWAng) {
@@ -425,8 +443,10 @@ export class Texture extends BaseTexture {
 
         this._cachedUOffset = this.uOffset;
         this._cachedVOffset = this.vOffset;
+        this._cachedUVOffset = this.uvOffset;
         this._cachedUScale = this.uScale;
         this._cachedVScale = this.vScale;
+        this._cachedUVScale = this.uvScale;
         this._cachedUAng = this.uAng;
         this._cachedVAng = this.vAng;
         this._cachedWAng = this.wAng;
@@ -483,8 +503,10 @@ export class Texture extends BaseTexture {
         if (
             this.uOffset === this._cachedUOffset &&
             this.vOffset === this._cachedVOffset &&
+            this.uvOffset === this._cachedUVOffset &&
             this.uScale === this._cachedUScale &&
             this.vScale === this._cachedVScale &&
+            this.uvScale == this._cachedUVScale &&
             this.coordinatesMode === this._cachedCoordinatesMode) {
             if (this.coordinatesMode === Texture.PROJECTION_MODE) {
                 if (this._cachedProjectionMatrixId === scene.getProjectionMatrix().updateFlag) {
@@ -505,17 +527,19 @@ export class Texture extends BaseTexture {
 
         this._cachedUOffset = this.uOffset;
         this._cachedVOffset = this.vOffset;
+        this._cachedUVOffset = this.uvOffset;
         this._cachedUScale = this.uScale;
         this._cachedVScale = this.vScale;
+        this._cachedUVScale = this.uvScale;
         this._cachedCoordinatesMode = this.coordinatesMode;
 
         switch (this.coordinatesMode) {
             case Texture.PLANAR_MODE:
                 Matrix.IdentityToRef(this._cachedTextureMatrix);
-                (<any>this._cachedTextureMatrix)[0] = this.uScale;
-                (<any>this._cachedTextureMatrix)[5] = this.vScale;
-                (<any>this._cachedTextureMatrix)[12] = this.uOffset;
-                (<any>this._cachedTextureMatrix)[13] = this.vOffset;
+                (<any>this._cachedTextureMatrix)[0] = this.uvScale.x;
+                (<any>this._cachedTextureMatrix)[5] = this.uvScale.y;
+                (<any>this._cachedTextureMatrix)[12] = this.uvOffset.x;
+                (<any>this._cachedTextureMatrix)[13] = this.uvOffset.y;
                 break;
             case Texture.PROJECTION_MODE:
                 Matrix.FromValuesToRef(

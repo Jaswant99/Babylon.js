@@ -1,5 +1,5 @@
 import { IEasingFunction, EasingFunction } from "./easing";
-import { Vector3, Quaternion, Vector2, Color3, Size, Matrix } from "../Maths/math";
+import { Vector3, Quaternion, Vector2, Color3, Size, Matrix, Color4 } from "../Maths/math";
 import { Scalar } from "../Maths/math.scalar";
 
 import { Nullable } from "../types";
@@ -93,6 +93,8 @@ export class Animation {
             dataType = Animation.ANIMATIONTYPE_VECTOR2;
         } else if (from instanceof Color3) {
             dataType = Animation.ANIMATIONTYPE_COLOR3;
+        } else if (from instanceof Color4) {
+            dataType = Animation.ANIMATIONTYPE_COLOR4;
         } else if (from instanceof Size) {
             dataType = Animation.ANIMATIONTYPE_SIZE;
         }
@@ -570,6 +572,17 @@ export class Animation {
     }
 
     /**
+     * Interpolates a Color4 linearly
+     * @param startValue Start value of the animation curve
+     * @param endValue End value of the animation curve
+     * @param gradient Scalar amount to interpolate
+     * @returns Interpolated Color4 value
+     */
+    public color4InterpolateFunction(startValue: Color4, endValue: Color4, gradient: number): Color4 {
+        return Color4.Lerp(startValue, endValue, gradient);
+    }
+
+    /**
      * @hidden Internal use only
      */
     public _getKeyValue(value: any): any {
@@ -688,6 +701,15 @@ export class Animation {
                             case Animation.ANIMATIONLOOPMODE_RELATIVE:
                                 return this.color3InterpolateFunction(startValue, endValue, gradient).add(state.offsetValue.scale(state.repeatCount));
                         }
+                    // Color4
+                    case Animation.ANIMATIONTYPE_COLOR4:
+                        switch (state.loopMode) {
+                            case Animation.ANIMATIONLOOPMODE_CYCLE:
+                            case Animation.ANIMATIONLOOPMODE_CONSTANT:
+                                return this.color4InterpolateFunction(startValue, endValue, gradient);
+                            case Animation.ANIMATIONLOOPMODE_RELATIVE:
+                                return this.color4InterpolateFunction(startValue, endValue, gradient).add(state.offsetValue.scale(state.repeatCount));
+                        }
                     // Matrix
                     case Animation.ANIMATIONTYPE_MATRIX:
                         switch (state.loopMode) {
@@ -801,6 +823,7 @@ export class Animation {
                 case Animation.ANIMATIONTYPE_MATRIX:
                 case Animation.ANIMATIONTYPE_VECTOR3:
                 case Animation.ANIMATIONTYPE_COLOR3:
+                case Animation.ANIMATIONTYPE_COLOR4:
                     key.values = animationKey.value.asArray();
                     break;
             }
@@ -854,6 +877,10 @@ export class Animation {
      * Size animation type
      */
     private static _ANIMATIONTYPE_SIZE = 6;
+    /**
+     * Color4 animation type
+     */
+    private static _ANIMATIONTYPE_COLOR4 = 4;
     /**
      * Relative Loop Mode
      */
@@ -914,6 +941,13 @@ export class Animation {
      */
     public static get ANIMATIONTYPE_COLOR3(): number {
         return Animation._ANIMATIONTYPE_COLOR3;
+    }
+
+    /**
+     * Get the Color3 animation type
+     */
+    public static get ANIMATIONTYPE_COLOR4(): number {
+        return Animation._ANIMATIONTYPE_COLOR4;
     }
 
     /**
@@ -1007,6 +1041,9 @@ export class Animation {
                     break;
                 case Animation.ANIMATIONTYPE_COLOR3:
                     data = Color3.FromArray(key.values);
+                    break;
+                case Animation.ANIMATIONTYPE_COLOR4:
+                    data = Color4.FromArray(key.values);
                     break;
                 case Animation.ANIMATIONTYPE_VECTOR3:
                 default:

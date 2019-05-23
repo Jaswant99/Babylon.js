@@ -3,7 +3,7 @@ import { Condition } from "./condition";
 
 import { Logger } from "../Misc/logger";
 import { Observable } from "../Misc/observable";
-import { Color3, Vector3, Matrix, Quaternion } from "../Maths/math";
+import { Color3, Vector3, Matrix, Quaternion, Color4 } from "../Maths/math";
 import { Animation } from "../Animations/animation";
 import { _TypeStore } from '../Misc/typeStore';
 
@@ -96,6 +96,8 @@ export class InterpolateValueAction extends Action {
             dataType = Animation.ANIMATIONTYPE_FLOAT;
         } else if (this.value instanceof Color3) {
             dataType = Animation.ANIMATIONTYPE_COLOR3;
+        } else if (this.value instanceof Color4) {
+            dataType = Animation.ANIMATIONTYPE_COLOR4;
         } else if (this.value instanceof Vector3) {
             dataType = Animation.ANIMATIONTYPE_VECTOR3;
         } else if (this.value instanceof Matrix) {

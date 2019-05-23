@@ -48,6 +48,8 @@ export class KHR_texture_transform implements IGLTFLoaderExtension {
                 if (extension.offset) {
                     babylonTexture.uOffset = extension.offset[0];
                     babylonTexture.vOffset = extension.offset[1];
+                    babylonTexture.uvOffset.x = extension.offset[0];
+                    babylonTexture.uvOffset.y = extension.offset[1];
                 }
 
                 // Always rotate around the origin.
@@ -61,6 +63,8 @@ export class KHR_texture_transform implements IGLTFLoaderExtension {
                 if (extension.scale) {
                     babylonTexture.uScale = extension.scale[0];
                     babylonTexture.vScale = extension.scale[1];
+                    babylonTexture.uvScale.x = extension.scale[0];
+                    babylonTexture.uvScale.y = extension.scale[1];
                 }
 
                 if (extension.texCoord != undefined) {

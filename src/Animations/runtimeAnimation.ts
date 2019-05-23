@@ -1,5 +1,5 @@
 import { DeepImmutable, Nullable } from "../types";
-import { Quaternion, Vector3, Vector2, Size, Color3, Matrix } from "../Maths/math";
+import { Quaternion, Vector3, Vector2, Size, Color3, Matrix, Color4 } from "../Maths/math";
 import { Animation, _IAnimationState } from "./animation";
 import { AnimationEvent } from "./animationEvent";
 
@@ -24,6 +24,9 @@ const _staticOffsetValueSize: DeepImmutable<Size> = Object.freeze(Size.Zero());
 
 // Color3
 const _staticOffsetValueColor3: DeepImmutable<Color3> = Object.freeze(Color3.Black());
+
+// Color4
+const _staticOffsetValueColor4: DeepImmutable<Color4> = Object.freeze(new Color4(0, 0, 0, 1));
 
 /**
  * Defines a runtime animation
@@ -529,6 +532,9 @@ export class RuntimeAnimation {
                     // Color3
                     case Animation.ANIMATIONTYPE_COLOR3:
                         this._offsetsCache[keyOffset] = toValue.subtract(fromValue);
+                    // Color4
+                    case Animation.ANIMATIONTYPE_COLOR4:
+                        this._offsetsCache[keyOffset] = toValue.subtract(fromValue);
                     default:
                         break;
                 }
@@ -565,6 +571,9 @@ export class RuntimeAnimation {
                 // Color3
                 case Animation.ANIMATIONTYPE_COLOR3:
                     offsetValue = _staticOffsetValueColor3;
+                // Color4
+                case Animation.ANIMATIONTYPE_COLOR4:
+                offsetValue = _staticOffsetValueColor4;
             }
         }
 

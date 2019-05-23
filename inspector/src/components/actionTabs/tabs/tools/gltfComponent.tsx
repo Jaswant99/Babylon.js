@@ -31,6 +31,7 @@ export class GLTFComponent extends React.Component<IGLTFComponentProps> {
         extensionStates["KHR_lights_punctual"] = extensionStates["KHR_lights_punctual"] || { enabled: true };
         extensionStates["KHR_texture_transform"] = extensionStates["KHR_texture_transform"] || { enabled: true };
         extensionStates["EXT_lights_image_based"] = extensionStates["EXT_lights_image_based"] || { enabled: true };
+        extensionStates["EXT_property_animation"] = extensionStates["EXT_property_animation"] || { enabled: true };
 
         const loaderState = this.props.globalState.glTFLoaderDefaults;
 
@@ -133,6 +134,7 @@ export class GLTFComponent extends React.Component<IGLTFComponentProps> {
                     <CheckBoxLineComponent label="KHR_lights_punctual" isSelected={() => extensionStates["KHR_lights_punctual"].enabled} onSelect={value => extensionStates["KHR_lights_punctual"].enabled = value} />
                     <CheckBoxLineComponent label="KHR_texture_transform" isSelected={() => extensionStates["KHR_texture_transform"].enabled} onSelect={value => extensionStates["KHR_texture_transform"].enabled = value} />
                     <CheckBoxLineComponent label="EXT_lights_image_based" isSelected={() => extensionStates["EXT_lights_image_based"].enabled} onSelect={value => extensionStates["EXT_lights_image_based"].enabled = value} />
+                    <CheckBoxLineComponent label="EXT_property_animation" isSelected={() => extensionStates["EXT_property_animation"].enabled} onSelect={value => extensionStates["EXT_property_animation"].enabled = value} />
                     <MessageLineComponent text="You need to reload your file to see these changes" />
                 </LineContainerComponent>
                 {

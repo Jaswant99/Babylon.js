@@ -1329,7 +1329,7 @@ export class GLTFLoader implements IGLTFLoader {
         });
     }
 
-    private _loadAnimationSamplerAsync(context: string, sampler: IAnimationSampler): Promise<_IAnimationSamplerData> {
+   private _loadAnimationSamplerAsync(context: string, sampler: IAnimationSampler): Promise<_IAnimationSamplerData> {
         if (sampler._data) {
             return sampler._data;
         }
@@ -1423,7 +1423,12 @@ export class GLTFLoader implements IGLTFLoader {
         return accessor._data as Promise<IndicesArray>;
     }
 
-    private _loadFloatAccessorAsync(context: string, accessor: IAccessor): Promise<Float32Array> {
+    /** dummy
+     * @param context dummy
+     * @param accessor dummy
+     * @return dummy
+     */
+    public _loadFloatAccessorAsync(context: string, accessor: IAccessor): Promise<Float32Array> {
         // TODO: support normalized and stride
 
         if (accessor.componentType !== AccessorComponentType.FLOAT) {
